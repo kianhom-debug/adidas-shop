@@ -32,7 +32,7 @@ include '../header.php';
             <?php else: ?>
                 <div class="profile-photo-placeholder" 
                      style="width:150px;height:150px;border-radius:50%;background:#0066cc;color:white;display:flex;align-items:center;justify-content:center;font-size:48px;margin:0 auto;">
-                    <?= strtoupper(substr($user['username'], 0, 1)) ?>
+                    <?= strtoupper(substr($user['name'], 0, 1)) ?>
                 </div>
             <?php endif; ?>
             
@@ -72,20 +72,26 @@ include '../header.php';
             
             <table style="width:100%;">
                 <tr>
-                    <th style="width:150px;text-align:left;padding:12px 0;">Username:</th>
-                    <td style="padding:12px 0;"><?= htmlspecialchars($user['username']) ?></td>
-                </tr>
-                <tr>
-                    <th style="text-align:left;padding:12px 0;">Full Name:</th>
-                    <td style="padding:12px 0;"><?= htmlspecialchars($user['full_name']) ?></td>
+                    <th style="width:150px;text-align:left;padding:12px 0;">Name:</th>
+                    <td style="padding:12px 0;"><?= htmlspecialchars($user['name']) ?></td>
                 </tr>
                 <tr>
                     <th style="text-align:left;padding:12px 0;">Email:</th>
                     <td style="padding:12px 0;"><?= htmlspecialchars($user['email']) ?></td>
                 </tr>
                 <tr>
-                    <th style="text-align:left;padding:12px 0;">Member Since:</th>
-                    <td style="padding:12px 0;"><?= date('F j, Y', strtotime($user['created_at'])) ?></td>
+                    <th style="text-align:left;padding:12px 0;">Role:</th>
+                    <td style="padding:12px 0;"><?= htmlspecialchars($user['role'] ?? 'user') ?></td>
+                </tr>
+                <tr>
+                    <th style="text-align:left;padding:12px 0;">Email Verified:</th>
+                    <td style="padding:12px 0;">
+                        <?php if ($user['is_verified']): ?>
+                            <span style="color:green;">✓ Verified</span>
+                        <?php else: ?>
+                            <span style="color:red;">✗ Not verified</span>
+                        <?php endif; ?>
+                    </td>
                 </tr>
             </table>
         </div>

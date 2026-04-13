@@ -19,17 +19,11 @@ $errors = [];
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $fullName = trim($_POST['full_name'] ?? '');
-    $username = trim($_POST['username'] ?? '');
+    $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     
-    if (empty($fullName)) {
-        $errors['full_name'] = 'Full name is required';
-    }
-    if (empty($username)) {
-        $errors['username'] = 'Username is required';
-    } elseif (strlen($username) < 3) {
-        $errors['username'] = 'Username must be at least 3 characters';
+    if (empty($name)) {
+        $errors['name'] = 'Name is required';
     }
     if (empty($email)) {
         $errors['email'] = 'Email is required';
@@ -38,9 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     if (empty($errors)) {
-        $stmt = $pdo->prepare("UPDATE users SET full_name = ?, username = ?, email = ? WHERE id = ?");
-        if ($stmt->execute([$fullName, $username, $email, $userId])) {
-            $_SESSION['user_name'] = $username;
+        $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
+        if ($stmt->execute([$name, $email, $userId])) {
+            $_SESSION['user_name'] = $name;
             $_SESSION['user_email'] = $email;
             $success = 'Profile updated successfully!';
             // Refresh user data
@@ -86,16 +80,9 @@ include '../header.php';
             
             <form method="POST" action="">
                 <div class="form-group" style="margin-bottom:15px;">
-                    <label for="username" style="display:block;margin-bottom:5px;">Username</label>
-                    <input type="text" name="username" id="username" 
-                           value="<?= htmlspecialchars($user['username']) ?>" 
-                           style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;" required>
-                </div>
-                
-                <div class="form-group" style="margin-bottom:15px;">
-                    <label for="full_name" style="display:block;margin-bottom:5px;">Full Name</label>
-                    <input type="text" name="full_name" id="full_name" 
-                           value="<?= htmlspecialchars($user['full_name']) ?>" 
+                    <label for="name" style="display:block;margin-bottom:5px;">Full Name</label>
+                    <input type="text" name="name" id="name" 
+                           value="<?= htmlspecialchars($user['name']) ?>" 
                            style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;" required>
                 </div>
                 
