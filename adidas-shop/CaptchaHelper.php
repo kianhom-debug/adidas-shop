@@ -19,28 +19,23 @@ class CaptchaHelper {
             $answer = $num1 - $num2;
         }
         
-        $_SESSION['captcha_answer'] = $answer;
-        $_SESSION['captcha_expires'] = time() + 300;
+        // Store in COOKIE instead of session
+        setcookie('captcha_answer', $answer, time() + 300, '/');
         
         return $question;
     }
     
     public static function verifyMathCaptcha($userAnswer) {
-        if (!isset($_SESSION['captcha_answer']) || !isset($_SESSION['captcha_expires'])) {
+        if (!isset($_COOKIE['captcha_answer'])) {
             return false;
         }
         
-        if (time() > $_SESSION['captcha_expires']) {
-            unset($_SESSION['captcha_answer']);
-            unset($_SESSION['captcha_expires']);
-            return false;
-        }
+        $expected = intval($_COOKIE['captcha_answer']);
+        $userAnswerInt = intval($userAnswer);
         
-        $isValid = (intval($userAnswer) === $_SESSION['captcha_answer']);
+        // Clear cookie
+        setcookie('captcha_answer', '', time() - 3600, '/');
         
-        unset($_SESSION['captcha_answer']);
-        unset($_SESSION['captcha_expires']);
-        
-        return $isValid;
+        return ($userAnswerInt === $expected);
     }
 }
