@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($_POST['action'] === 'clear') {
             $_SESSION['cart'] = [];
         } elseif ($_POST['action'] === 'update') {
-            $id = (int)$_POST['id'];
+            $id = $_POST['id'];
             $unit = (int)$_POST['unit'];
             if ($unit > 0) {
                 $_SESSION['cart'][$id] = $unit;
