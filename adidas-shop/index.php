@@ -19,17 +19,23 @@ require_once 'config.php';
             </div>
             <nav class="main-nav">
                 <ul>
-                    <li><a href="#">SHOES</a></li>
-                    <li><a href="#">MEN</a></li>
-                    <li><a href="#">WOMEN</a></li>
-                    <li><a href="#">KIDS</a></li>
-                    <li><a href="#">SPORTS</a></li>
-                    <li><a href="#">BRANDS</a></li>
-                    <li><a href="#">OUTLET</a></li>
+                    <li><a href="products.php?type=Shoes">SHOES</a></li>
+                    <li><a href="products.php?category_id=3">CLOTHING</a></li>
+                    <li><a href="products.php?category_id=1">MEN</a></li>
+                    <li><a href="products.php?category_id=2">WOMEN</a></li>
+                    
+                    <li><a href="products.php?show=all">ALL</a></li>
+
+                    <li><a href="admin/index.php">ADMIN</a></li>
                 </ul>
             </nav>
-            <div class="header-actions">
-                <a href="#" class="search-icon">🔍</a>
+                <div class="header-actions" style="display: flex; align-items: center; gap: 15px;">
+                    <form action="products.php" method="GET" style="display: flex; align-items: center; margin-top: 8px;">
+                <input type="text" name="search" placeholder="Search products..." 
+                style="padding: 7px; border: 1px solid #ccc; border-radius: 4px;">
+                <button type="submit" class="search-btn" style="background: none; border: none; cursor: pointer; padding-left: 5px;">🔍</button>
+                    </form>
+                    
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <a href="member/profile.php" class="user-icon">👤 <?= htmlspecialchars($_SESSION['user_name']) ?></a>
                     <a href="member/logout.php" class="logout-btn">Logout</a>
@@ -76,40 +82,40 @@ require_once 'config.php';
     </section>
 
     <!-- Featured Products -->
-    <section class="featured-products">
-        <div class="container">
-            <h2 class="section-title">FEATURED PRODUCTS</h2>
-            <div class="product-grid">
-                <?php
-                // Sample products (replace with database query)
-                $sample_products = [
-                    ['name' => 'Ultraboost 22', 'price' => 699.00, 'image' => '👟'],
-                    ['name' => 'Superstar', 'price' => 399.00, 'image' => '👟'],
-                    ['name' => 'Stan Smith', 'price' => 459.00, 'image' => '👟'],
-                    ['name' => 'NMD R1', 'price' => 599.00, 'image' => '👟'],
-                    ['name' => 'Originals Hoodie', 'price' => 299.00, 'image' => '👕'],
-                    ['name' => 'Tiro Track Pants', 'price' => 199.00, 'image' => '👖'],
-                    ['name' => 'Backpack', 'price' => 159.00, 'image' => '🎒'],
-                    ['name' => 'Cap', 'price' => 89.00, 'image' => '🧢'],
-                ];
-                
-                foreach ($sample_products as $product): ?>
-                    <div class="product-card">
-                        <div class="product-image">
-                            <div class="product-icon"><?= $product['image'] ?></div>
-                        </div>
-                        <div class="product-info">
-                            <h3><?= htmlspecialchars($product['name']) ?></h3>
-                            <div class="price">
-                                <span class="current-price">RM <?= number_format($product['price'], 2) ?></span>
-                            </div>
-                            <a href="member/product_detail.php" class="btn-view">View Details</a>
-                        </div>
+<section class="featured-products">
+    <div class="container">
+        <h2 class="section-title">FEATURED PRODUCTS</h2>
+        <div class="product-grid">
+            <?php
+            try {
+                $sql = "SELECT * FROM product LIMIT 8";
+                $stmt = $pdo->query($sql);
+                $products = $stmt->fetchAll();
+            } catch (PDOException $e) {
+                die("Error: " . $e->getMessage());
+            }
+            ?>
+
+            <?php foreach ($products as $product): ?>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="uploads/products/<?= htmlspecialchars($product['photo']) ?>" 
+                             alt="<?= htmlspecialchars($product['name']) ?>" 
+                             style="width:100%; height:200px; object-fit:cover;">
                     </div>
-                <?php endforeach; ?>
-            </div>
+
+                    <div class="product-info">
+                        <h3><?= htmlspecialchars($product['name']) ?></h3>
+                        <div class="price">
+                            <span class="current-price">RM <?= number_format($product['price'], 2) ?></span>
+                        </div>
+                        <a href="member/product_detail.php?id=<?= $product['id'] ?>" class="btn-view">View Details</a>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Footer -->
     <footer class="main-footer">

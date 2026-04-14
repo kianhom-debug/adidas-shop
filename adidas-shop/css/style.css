@@ -167,11 +167,34 @@
 }
 
 .product-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     background: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    transition: transform 0.3s;
+    border: 1px solid #eee;
+    transition: 0.3s;
+}
+
+.product-info {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; 
+}
+
+.product-info h3 {
+    min-height: 45px;
+    margin-bottom: 10px;
+}
+
+.btn-view {
+    margin-top: auto;
+    display: block;
+    text-align: center;
+    background: #000;
+    color: #fff;
+    padding: 10px;
+    text-decoration: none;
 }
 
 .product-card:hover {
@@ -498,3 +521,95 @@
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
+
+/* ========== ADMIN DASHBOARD STYLES ========== */
+
+.admin-layout { 
+    display: grid; 
+    grid-template-columns: 250px 1fr; 
+    gap: 40px; 
+    margin-top: 40px; 
+    margin-bottom: 60px; 
+}
+
+.stat-card { 
+    background: #f4f4f4; 
+    padding: 20px; 
+    border-radius: 4px; 
+    text-align: center; 
+    border-left: 5px solid #000; 
+}
+.stat-num { 
+    font-size: 2rem; 
+    font-weight: bold; 
+    display: block; 
+    margin: 10px 0; 
+}
+.warning-card { border-left-color: #ff0000; }
+
+.admin-nav-list { list-style: none; padding: 0; }
+.admin-nav-list li a { 
+    display: block; 
+    padding: 15px; 
+    border-bottom: 1px solid #eee; 
+    color: #333; 
+    text-decoration: none; 
+    transition: 0.3s; 
+}
+.admin-nav-list li a:hover, 
+.admin-nav-list li a.active { 
+    background: #000 !important; 
+    color: #fff !important; 
+}
+
+.product-table, .cat-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    background: #fff; 
+    margin-top: 20px; 
+}
+.product-table thead, .cat-table th { 
+    background: #000; 
+    color: #fff; 
+    text-transform: uppercase; 
+}
+.product-table th, .product-table td, 
+.cat-table th, .cat-table td { 
+    padding: 15px; 
+    text-align: left; 
+    border-bottom: 1px solid #eee; 
+}
+
+/* Add Product */
+.admin-card { 
+    background: #fff; 
+    padding: 30px; 
+    border: 1px solid #eee; 
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05); 
+}
+.form-title { 
+    font-size: 1.5rem; 
+    font-weight: bold; 
+    margin-bottom: 20px; 
+    border-bottom: 2px solid #000; 
+    padding-bottom: 10px; 
+}
+.form-group { margin-bottom: 20px; }
+.form-group label { 
+    display: block; 
+    font-weight: bold; 
+    margin-bottom: 8px; 
+    text-transform: uppercase; 
+    font-size: 0.8rem; 
+}
+.form-control { 
+    width: 100%; 
+    padding: 12px; 
+    border: 1px solid #ccc; 
+    font-family: inherit; 
+}
+
+
+.error-msg { color: red; background: #ffe6e6; padding: 10px; margin-bottom: 10px; border: 1px solid red; }
+.action-link { text-decoration: none; font-weight: bold; font-size: 0.9rem; }
+.btn-delete { color: #dc3545; text-decoration: none; font-weight: bold; }
