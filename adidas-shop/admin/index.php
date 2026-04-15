@@ -3,7 +3,7 @@ session_start();
 require_once '../config.php';
 
 // login check 
-//ujuj
+
 try {
     $total_products = $pdo->query("SELECT COUNT(*) FROM product")->fetchColumn();
     $total_cats = $pdo->query("SELECT COUNT(*) FROM category")->fetchColumn();

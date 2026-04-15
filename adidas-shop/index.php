@@ -26,7 +26,7 @@ require_once 'config.php';
                     
                     <li><a href="products.php?show=all">ALL</a></li>
 
-                    <li><a href="admin/index.php">ADMIN</a></li>
+                    
                 </ul>
             </nav>
                 <div class="header-actions" style="display: flex; align-items: center; gap: 15px;">
@@ -42,6 +42,7 @@ require_once 'config.php';
                     <a href="member/profile.php" class="user-icon">👤 <?= htmlspecialchars($_SESSION['user_name']) ?></a>
                     <a href="member/logout.php" class="logout-btn">Logout</a>
                 <?php else: ?>
+                    <a href="admin/index.php">Admin</a>
                     <a href="member/login.php" class="login-btn">Login</a>
                 <?php endif; ?>
                 <a href="member/cart.php" class="cart-icon">🛒</a>
@@ -58,31 +59,7 @@ require_once 'config.php';
             <a href="#" class="btn-shop">SHOP NOW →</a>
         </div>
     </section>
-
-    <!-- Categories Section -->
-    <section class="categories">
-        <div class="container">
-            <h2 class="section-title">SHOP BY CATEGORY</h2>
-            <div class="category-grid">
-                <div class="category-card">
-                    <div class="category-image">👟</div>
-                    <h3>Shoes</h3>
-                    <p>Explore latest footwear</p>
-                </div>
-                <div class="category-card">
-                    <div class="category-image">👕</div>
-                    <h3>Clothing</h3>
-                    <p>T-shirts, hoodies & more</p>
-                </div>
-                <div class="category-card">
-                    <div class="category-image">🎒</div>
-                    <h3>Accessories</h3>
-                    <p>Bags, hats & gear</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
+    
     <!-- Featured Products -->
 <section class="featured-products">
     <div class="container">
