@@ -21,7 +21,7 @@ if (!$product) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
-    $cart_id = $_POST['product_id']; // 保持为字符串
+    $cart_id = $_POST['product_id']; 
     $unit = (int)$_POST['unit'];
     
     if (!isset($_SESSION['cart'])) {
