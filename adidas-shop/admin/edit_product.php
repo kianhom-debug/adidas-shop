@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../config.php';
+require_once 'auth_check.php';
 
 // 1. Get ID and fetch existing data
 $id = $_GET['id'] ?? '';

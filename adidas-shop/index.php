@@ -37,15 +37,21 @@ require_once 'config.php';
                     </form>
                     
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="member/history.php" style="color: #fff; text-decoration: none; font-weight: bold;">My Orders</a>
+                        <?php if ($_SESSION['role'] === 'admin'): ?>
+                            <a href="admin/index.php" style="color: #ffffff; text-decoration: none; font-weight: bold;"> ADMIN PANEL</a>
+                        <?php else: ?>
+                            <a href="member/history.php" style="color: #fff; text-decoration: none; font-weight: bold;">My Orders</a>
+                        <?php endif; ?>
+                        
+                        <a href="member/profile.php" class="user-icon">👤 <?= htmlspecialchars($_SESSION['user_name']) ?></a>
+                        <a href="member/logout.php" class="logout-btn">Logout</a>
+                        
+                    <?php else: ?>
+                        <a href="member/login.php" class="login-btn">Login</a>
+                    <?php endif; ?>
                     
-                    <a href="member/profile.php" class="user-icon">👤 <?= htmlspecialchars($_SESSION['user_name']) ?></a>
-                    <a href="member/logout.php" class="logout-btn">Logout</a>
-                <?php else: ?>
-                    <a href="admin/index.php">Admin</a>
-                    <a href="member/login.php" class="login-btn">Login</a>
-                <?php endif; ?>
-                <a href="member/cart.php" class="cart-icon">🛒</a>
+                    <a href="member/cart.php" class="cart-icon">🛒</a>
+                </div>
             </div>
         </div>
     </header>

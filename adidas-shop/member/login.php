@@ -27,12 +27,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_email'] = $user['email'];
+            $_SESSION['role'] = $user['role'];
             
             if ($remember) {
                 $rememberToken = new RememberToken($pdo);
                 $token = $rememberToken->create($user['id']);
                 setcookie('remember_token', $token, time() + 86400 * 30, '/');
             }
+            if ($_SESSION['role'] === 'admin') {
+                header("Location: ../admin/index.php");
+            } else {
+                header('Location: profile.php');
+            }
+            exit();
             
             header('Location: profile.php');
             exit;
@@ -41,6 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $captcha_question = CaptchaHelper::generateMathCaptcha();
         }
     }
+
 }
 ?>
 

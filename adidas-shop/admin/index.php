@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../config.php';
+require_once 'auth_check.php';
 
 // login check 
 
@@ -26,7 +27,7 @@ try {
                 <a href="../index.php">ADIDAS ADMIN</a>
             </div>
             <div class="header-actions">
-                <span>Welcome, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin') ?></span>
+                <span>Welcome, <?= ($_SESSION['user_name'] ?? 'Admin') ?></span>
                 <a href="../member/logout.php" class="logout-btn">Logout</a>
             </div>
         </div>
