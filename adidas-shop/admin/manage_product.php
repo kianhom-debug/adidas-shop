@@ -78,7 +78,7 @@ try {
                         <tr>
                             <td>
                                 <?php if($p['photo']): ?>
-                                    <img src="../uploads/products/<?= $p['photo'] ?>" class="admin-thumb" style="width:50px; height:50px; object-fit:cover;">
+                                    <img src="../uploads/products/<?= $p['photo'] ?>.jpeg" class="admin-thumb" style="width:50px; height:50px; object-fit:cover;">
                                 <?php else: ?>
                                     <div class="no-image-placeholder">No Image</div>
                                 <?php endif; ?>

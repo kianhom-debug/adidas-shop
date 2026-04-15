@@ -101,7 +101,7 @@ require_once 'config.php';
             <?php foreach ($products as $product): ?>
                 <div class="product-card">
                     <div class="product-image">
-                        <img src="uploads/products/<?= htmlspecialchars($product['photo']) ?>" 
+                        <img src="uploads/products/<?= htmlspecialchars($product['photo']) ?>.jpeg" 
                              alt="<?= htmlspecialchars($product['name']) ?>" 
                              style="width:100%; height:200px; object-fit:cover;">
                     </div>

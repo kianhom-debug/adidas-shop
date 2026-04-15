@@ -3,7 +3,7 @@ session_start();
 require_once '../config.php';
 
 // login check
-
+//gg
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id          = trim($_POST['id'] ?? '');
     $category_id = trim($_POST['category_id'] ?? '');
