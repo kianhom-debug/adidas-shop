@@ -3,7 +3,6 @@ session_start();
 require_once '../config.php';
 require_once 'auth_check.php';
 
-// login check
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id          = trim($_POST['id'] ?? '');

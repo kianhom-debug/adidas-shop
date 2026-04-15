@@ -3,7 +3,6 @@ session_start();
 require_once '../config.php';
 require_once 'auth_check.php';
 
-// login check 
 
 try {
     $total_products = $pdo->query("SELECT COUNT(*) FROM product")->fetchColumn();

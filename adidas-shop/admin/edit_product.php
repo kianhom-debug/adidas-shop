@@ -3,7 +3,6 @@ session_start();
 require_once '../config.php';
 require_once 'auth_check.php';
 
-// 1. Get ID and fetch existing data
 $id = $_GET['id'] ?? '';
 if (empty($id)) {
     header("Location: manage_product.php");
@@ -22,21 +21,18 @@ try {
     die("Database Error: " . $e->getMessage());
 }
 
-// 2. Update Logic
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $category_id = $_POST['category_id'];
     $name        = trim($_POST['name']);
     $price       = $_POST['price'];
     $stock       = $_POST['stock'];
     $type        = $_POST['type'];
-    $photo       = $product['photo']; // Default to old image
+    $photo       = $product['photo']; 
 
-    // Handle new photo upload
     if (!empty($_FILES['main_photo']['name'])) {
         $new_filename = uniqid("main_") . "." . pathinfo($_FILES['main_photo']['name'], PATHINFO_EXTENSION);
         if (move_uploaded_file($_FILES['main_photo']['tmp_name'], "../uploads/products/" . $new_filename)) {
-            // Optional: delete old file from server
-            // if(file_exists("../uploads/products/".$photo)) unlink("../uploads/products/".$photo);
             $photo = $new_filename;
         }
     }
@@ -53,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Fetch categories for dropdown
 $categories = $pdo->query("SELECT * FROM category")->fetchAll();
 ?>
 
