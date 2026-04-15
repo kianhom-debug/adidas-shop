@@ -3,7 +3,6 @@ session_start();
 require_once '../config.php';
 require_once 'auth_check.php';
 
-// login check 
 
 if (isset($_POST['add_category'])) {
     $name = $_POST['cat_name'];
