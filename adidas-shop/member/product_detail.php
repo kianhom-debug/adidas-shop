@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
 
         <div style="display: flex; gap: 50px;">
             <div class="product-visual" style="flex: 1; background: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 10px; min-height: 400px; overflow: hidden;">
-                <img src="../uploads/products/<?= htmlspecialchars($product['photo']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" style="max-width: 100%; max-height: 400px; object-fit: contain;">
+                <img src="../uploads/products/<?= htmlspecialchars($product['photo']) ?>.jpeg" alt="<?= htmlspecialchars($product['name']) ?>" style="max-width: 100%; max-height: 400px; object-fit: contain;">
             </div>
             
             <div class="product-details" style="flex: 1;">
