@@ -11,11 +11,32 @@ $userId = $_SESSION['user_id'];
 
 if (isset($_POST['cancel_id'])) {
     $cancelId = (int)$_POST['cancel_id'];
-    $stmt = $pdo->prepare("UPDATE `order` SET status = 'Cancelled' WHERE id = ? AND user_id = ? AND status = 'Pending'");
-    $stmt->execute([$cancelId, $userId]);
-    if ($stmt->rowCount() > 0) {
-        $_SESSION['success'] = "Order #$cancelId has been successfully cancelled.";
+    
+    try {
+        $pdo->beginTransaction();
+        
+        $stmt = $pdo->prepare("UPDATE `order` SET status = 'Cancelled' WHERE id = ? AND user_id = ? AND status = 'Pending'");
+        $stmt->execute([$cancelId, $userId]);
+        
+        if ($stmt->rowCount() > 0) {
+
+            $stmtStockRestore = $pdo->prepare("
+                UPDATE product p
+                JOIN item i ON p.id = i.product_id
+                SET p.stock = p.stock + i.unit
+                WHERE i.order_id = ?
+            ");
+            $stmtStockRestore->execute([$cancelId]);
+            
+            $_SESSION['success'] = "Order #$cancelId cancelled. Stock has been restored.";
+        }
+        
+        $pdo->commit();
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        $_SESSION['error'] = "Failed to cancel order.";
     }
+    
     header('Location: history.php');
     exit;
 }

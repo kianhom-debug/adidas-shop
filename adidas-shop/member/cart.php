@@ -96,12 +96,11 @@ if (!empty($_SESSION['cart'])) {
                     <td style="padding:10px;"><?= htmlspecialchars($item['name']) ?></td>
                     <td style="text-align:right; padding:10px;"><?= number_format($item['price'], 2) ?></td>
                     <td style="text-align:center; padding:10px;">
-                        <form method="POST" style="display:inline;">
+                        <form method="POST" style="display:inline;" class="update-cart-form">
                             <input type="hidden" name="action" value="update">
                             <input type="hidden" name="id" value="<?= $item['id'] ?>">
-                            <input type="number" name="unit" value="<?= $item['unit'] ?>" min="0" style="width: 60px; padding: 5px; border:1px solid #ccc;">
-                            <button type="submit" class="btn-sm">Update</button>
-                        </form>
+                            <input type="number" name="unit" value="<?= $item['unit'] ?>" min="0" style="width: 60px; padding: 5px; border:1px solid #ccc;" class="qty-input">
+                            </form>
                     </td>
                     <td style="text-align:right; padding:10px;"><?= number_format($item['subtotal'], 2) ?></td>
                 </tr>
@@ -124,5 +123,14 @@ if (!empty($_SESSION['cart'])) {
             </div>
         <?php endif; ?>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+        $('.qty-input').on('change', function() {
+        $(this).closest('form').submit();
+            });
+        });
+    </script>
 </body>
 </html>
