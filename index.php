@@ -23,35 +23,28 @@ require_once 'config.php';
                     <li><a href="products.php?category_id=3">CLOTHING</a></li>
                     <li><a href="products.php?category_id=1">MEN</a></li>
                     <li><a href="products.php?category_id=2">WOMEN</a></li>
-                    
                     <li><a href="products.php?show=all">ALL</a></li>
-
-                    
                 </ul>
             </nav>
-                <div class="header-actions" style="display: flex; align-items: center; gap: 15px;">
-                    <form action="products.php" method="GET" style="display: flex; align-items: center; margin-top: 8px;">
-                <input type="text" name="search" placeholder="Search products..." 
-                style="padding: 7px; border: 1px solid #ccc; border-radius: 4px;">
-                <button type="submit" class="search-btn" style="background: none; border: none; cursor: pointer; padding-left: 5px;">🔍</button>
-                    </form>
-                    
+            <div class="header-actions" style="display: flex; align-items: center; gap: 15px;">
+                <form action="products.php" method="GET" style="display: flex; align-items: center;">
+                    <input type="text" name="search" placeholder="Search products..." 
+                           style="padding: 7px; border: 1px solid #ccc; border-radius: 4px;">
+                    <button type="submit" class="search-btn" style="background: none; border: none; cursor: pointer; padding-left: 5px;">🔍</button>
+                </form>
+                
                 <?php if (isset($_SESSION['user_id'])): ?>
-                        <?php if ($_SESSION['role'] === 'admin'): ?>
-                            <a href="admin/index.php" style="color: #ffffff; text-decoration: none; font-weight: bold;"> ADMIN PANEL</a>
-                        <?php else: ?>
-                            <a href="member/history.php" style="color: #fff; text-decoration: none; font-weight: bold;">My Orders</a>
-                        <?php endif; ?>
-                        
-                        <a href="member/profile.php" class="user-icon">👤 <?= htmlspecialchars($_SESSION['user_name']) ?></a>
-                        <a href="member/logout.php" class="logout-btn">Logout</a>
-                        
+                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                        <a href="admin/index.php" style="color: #ffffff; text-decoration: none; font-weight: bold;">ADMIN PANEL</a>
                     <?php else: ?>
-                        <a href="member/login.php" class="login-btn">Login</a>
+                        <a href="member/history.php" style="color: #fff; text-decoration: none; font-weight: bold;">My Orders</a>
                     <?php endif; ?>
-                    
-                    <a href="member/cart.php" class="cart-icon">🛒</a>
-                </div>
+                    <a href="member/profile.php" class="user-icon">👤 <?= htmlspecialchars($_SESSION['user_name'] ?? 'User') ?></a>
+                    <a href="member/logout.php" class="logout-btn">Logout</a>
+                <?php else: ?>
+                    <a href="member/login.php" class="login-btn">Login</a>
+                <?php endif; ?>
+                <a href="member/cart.php" class="cart-icon">🛒</a>
             </div>
         </div>
     </header>
@@ -65,42 +58,45 @@ require_once 'config.php';
             <a href="#" class="btn-shop">SHOP NOW →</a>
         </div>
     </section>
-    
+
     <!-- Featured Products -->
-<section class="featured-products">
-    <div class="container">
-        <h2 class="section-title">FEATURED PRODUCTS</h2>
-        <div class="product-grid">
-            <?php
-            try {
-                $sql = "SELECT * FROM product LIMIT 8";
-                $stmt = $pdo->query($sql);
-                $products = $stmt->fetchAll();
-            } catch (PDOException $e) {
-                die("Error: " . $e->getMessage());
-            }
-            ?>
+    <section class="featured-products">
+        <div class="container">
+            <h2 class="section-title">FEATURED PRODUCTS</h2>
+            <div class="product-grid">
+                <?php
+                try {
+                    $sql = "SELECT * FROM product LIMIT 8";
+                    $stmt = $pdo->query($sql);
+                    $products = $stmt->fetchAll();
+                } catch (PDOException $e) {
+                    $products = [];
+                }
+                ?>
 
-            <?php foreach ($products as $product): ?>
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="uploads/products/<?= htmlspecialchars($product['photo']) ?>.jpeg" 
-                             alt="<?= htmlspecialchars($product['name']) ?>" 
-                             style="width:100%; height:200px; object-fit:cover;">
-                    </div>
-
-                    <div class="product-info">
-                        <h3><?= htmlspecialchars($product['name']) ?></h3>
-                        <div class="price">
-                            <span class="current-price">RM <?= number_format($product['price'], 2) ?></span>
+                <?php if (count($products) > 0): ?>
+                    <?php foreach ($products as $product): ?>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="uploads/products/<?= htmlspecialchars($product['photo']) ?>.jpeg" 
+                                     alt="<?= htmlspecialchars($product['name']) ?>" 
+                                     style="width:100%; height:200px; object-fit:cover;">
+                            </div>
+                            <div class="product-info">
+                                <h3><?= htmlspecialchars($product['name']) ?></h3>
+                                <div class="price">
+                                    <span class="current-price">RM <?= number_format($product['price'], 2) ?></span>
+                                </div>
+                                <a href="member/product_detail.php?id=<?= $product['id'] ?>" class="btn-view">View Details</a>
+                            </div>
                         </div>
-                        <a href="member/product_detail.php?id=<?= $product['id'] ?>" class="btn-view">View Details</a>
-                    </div>
-                </div>
-            <?php endforeach; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No products found.</p>
+                <?php endif; ?>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <!-- Footer -->
     <footer class="main-footer">
