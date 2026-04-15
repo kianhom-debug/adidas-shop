@@ -3,18 +3,41 @@ session_start();
 
 require_once '../config.php'; 
 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: ../member/login.php');
-    exit;
-}
+// if (!isset($_SESSION['user_id'])) {
+//     header('Location: ../member/login.php');
+//     exit;
+// }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_id'])) {
     $updateId = (int)$_POST['update_id'];
     $newStatus = $_POST['status'];
     
-    $stmt = $pdo->prepare("UPDATE `order` SET status = ? WHERE id = ?");
-    $stmt->execute([$newStatus, $updateId]);
-    $_SESSION['success'] = "Order #$updateId status updated to $newStatus.";
+    try {
+        $pdo->beginTransaction();
+        
+        $stmtCheck = $pdo->prepare("SELECT status FROM `order` WHERE id = ?");
+        $stmtCheck->execute([$updateId]);
+        $oldStatus = $stmtCheck->fetchColumn();
+        
+        $stmt = $pdo->prepare("UPDATE `order` SET status = ? WHERE id = ?");
+        $stmt->execute([$newStatus, $updateId]);
+        
+        if ($oldStatus !== 'Cancelled' && $newStatus === 'Cancelled') {
+            $stmtStock = $pdo->prepare("UPDATE product p JOIN item i ON p.id = i.product_id SET p.stock = p.stock + i.unit WHERE i.order_id = ?");
+            $stmtStock->execute([$updateId]);
+        }
+    
+        elseif ($oldStatus === 'Cancelled' && $newStatus !== 'Cancelled') {
+             $stmtStock = $pdo->prepare("UPDATE product p JOIN item i ON p.id = i.product_id SET p.stock = p.stock - i.unit WHERE i.order_id = ?");
+             $stmtStock->execute([$updateId]);
+        }
+        
+        $pdo->commit();
+        $_SESSION['success'] = "Order #$updateId status updated to $newStatus.";
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        $_SESSION['success'] = "Error updating order.";
+    }
     
     header('Location: manage_orders.php');
     exit;

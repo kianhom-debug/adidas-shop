@@ -26,8 +26,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             INSERT INTO item (order_id, product_id, price, unit, subtotal) 
             VALUES (?, ?, (SELECT price FROM product WHERE id = ?), ?, (SELECT price FROM product WHERE id = ?) * ?)
         ");
+
+        $stmtStock = $pdo->prepare("
+            UPDATE product 
+            SET stock = stock - ? 
+            WHERE id = ?
+        ");
+
         foreach ($_SESSION['cart'] as $productId => $unit) {
+            
             $stmtItem->execute([$orderId, $productId, $productId, $unit, $productId, $unit]);
+            
+            $stmtStock->execute([$unit, $productId]);
         }
 
         $stmtUpdate = $pdo->prepare("
