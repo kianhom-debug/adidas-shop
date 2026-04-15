@@ -3,6 +3,34 @@ session_start();
 require_once '../config.php';
 require_once 'auth_check.php';
 
+function resize_image($file, $target) {
+    list($w, $h) = getimagesize($file);
+    $new_w = 300;
+    $new_h = 300;
+
+    $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    if ($ext == 'png') {
+        $src = imagecreatefrompng($file);
+    } else {
+        $src = imagecreatefromjpeg($file);
+    }
+    
+    $dst = imagecreatetruecolor($new_w, $new_h);
+    
+    imagealphablending($dst, false);
+    imagesavealpha($dst, true);
+
+    imagecopyresampled($dst, $src, 0, 0, 0, 0, $new_w, $new_h, $w, $h);
+    
+    if ($ext == 'png') {
+        imagepng($dst, $target);
+    } else {
+        imagejpeg($dst, $target, 90);
+    }
+    
+    imagedestroy($src);
+    imagedestroy($dst);
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id          = trim($_POST['id'] ?? '');
@@ -13,9 +41,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $type        = $_POST['type'] ?? '';
     
     $photo = "";
-    if (!empty($_FILES['main_photo']['name'])) {
-        $photo = uniqid("main_") . "." . pathinfo($_FILES['main_photo']['name'], PATHINFO_EXTENSION);
-        move_uploaded_file($_FILES['main_photo']['tmp_name'], "../uploads/products/" . $photo);
+   if (!empty($_FILES['extra_photos']['name'][0])) {
+        foreach ($_FILES['extra_photos']['tmp_name'] as $key => $tmp_name) {
+            if ($_FILES['extra_photos']['error'][$key] == 0) {
+                $ext = pathinfo($_FILES['extra_photos']['name'][$key], PATHINFO_EXTENSION);
+                $new_filename = uniqid("img_") . "." . $ext; 
+                $target_extra = "../uploads/products/" . $new_filename;
+
+                if (move_uploaded_file($tmp_name, $target_extra)) {
+                    resize_image($target_extra, $target_extra); 
+
+                    $sql_photo = "INSERT INTO product_photo (product_id, filename) VALUES (?, ?)";
+                    $pdo->prepare($sql_photo)->execute([$id, $new_filename]);
+                }
+            }
+        }
     }
 
     try {
