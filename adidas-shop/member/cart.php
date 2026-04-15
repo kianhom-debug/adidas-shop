@@ -16,10 +16,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($_POST['action'] === 'clear') {
             $_SESSION['cart'] = [];
         } elseif ($_POST['action'] === 'update') {
-            $id = $_POST['id'];
+            $id = trim($_POST['id']);
             $unit = (int)$_POST['unit'];
+            
             if ($unit > 0) {
-                $_SESSION['cart'][$id] = $unit;
+                $stmtStock = $pdo->prepare("SELECT stock FROM product WHERE id = ?");
+                $stmtStock->execute([$id]);
+                $stock = $stmtStock->fetchColumn();
+                
+                if ($unit > $stock) {
+                    $_SESSION['cart'][$id] = $stock;
+                    $_SESSION['error'] = "Quantity adjusted. Only $stock items available in stock.";
+                } else {
+                    $_SESSION['cart'][$id] = $unit;
+                }
             } else {
                 unset($_SESSION['cart'][$id]);
             }
@@ -46,6 +56,7 @@ if (!empty($_SESSION['cart'])) {
             'id' => $p['id'],
             'name' => $p['name'],
             'price' => $p['price'],
+            'stock' => $p['stock'],
             'unit' => $unit,
             'subtotal' => $subtotal
         ];
@@ -99,7 +110,7 @@ if (!empty($_SESSION['cart'])) {
                         <form method="POST" style="display:inline;" class="update-cart-form">
                             <input type="hidden" name="action" value="update">
                             <input type="hidden" name="id" value="<?= $item['id'] ?>">
-                            <input type="number" name="unit" value="<?= $item['unit'] ?>" min="0" style="width: 60px; padding: 5px; border:1px solid #ccc;" class="qty-input">
+                            <input type="number" name="unit" value="<?= $item['unit'] ?>" min="0" max="<?= $item['stock'] ?>" style="width: 60px; padding: 5px; border:1px solid #ccc;" class="qty-input">
                             </form>
                     </td>
                     <td style="text-align:right; padding:10px;"><?= number_format($item['subtotal'], 2) ?></td>

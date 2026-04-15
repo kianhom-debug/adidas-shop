@@ -28,13 +28,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
         $_SESSION['cart'] = [];
     }
     
-    if (isset($_SESSION['cart'][$cart_id])) {
-        $_SESSION['cart'][$cart_id] += $unit;
+    $current_qty = isset($_SESSION['cart'][$cart_id]) ? $_SESSION['cart'][$cart_id] : 0;
+    $new_total_qty = $current_qty + $unit;
+
+    if ($new_total_qty > $product['stock']) {
+        $_SESSION['error'] = "Cannot add to cart. You already have $current_qty in cart, but only {$product['stock']} available in stock!";
     } else {
-        $_SESSION['cart'][$cart_id] = $unit;
+        $_SESSION['cart'][$cart_id] = $new_total_qty;
+        $_SESSION['success'] = "Successfully added to your cart!";
     }
     
-    $_SESSION['success'] = "Successfully added to your cart!";
     header('Location: product_detail.php?id=' . $cart_id);
     exit;
 }
@@ -49,6 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
 <body>
     <header class="main-header">
         <div class="container">
+            <?php if (isset($_SESSION['error'])): ?>
+            <div style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 15px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-weight: bold;">
+                ❌ <?= $_SESSION['error'] ?> 
+            </div>
+                <?php unset($_SESSION['error']); ?>
+                <?php endif; ?>
             <div class="logo"><a href="../index.php">ADIDAS</a></div>
             <div class="header-actions">
                 <a href="cart.php">🛒 Cart (<?= isset($_SESSION['cart']) ? array_sum($_SESSION['cart']) : 0 ?>)</a>
@@ -80,21 +89,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
                 <p style="color: #666; line-height: 1.6; margin-bottom: 10px; font-size: 16px;"><?= nl2br(htmlspecialchars($product['description'] ?? 'No description available.')) ?></p>
                 <p style="color: #888; font-size: 14px; margin-bottom: 30px;">In Stock: <?= $product['stock'] ?></p>
                 
-                <form method="POST">
-                    <input type="hidden" name="product_id" value="<?= htmlspecialchars($product['id']) ?>">
+                <?php if ($product['stock'] > 0): ?>
+                    <form method="POST">
+                        <input type="hidden" name="product_id" value="<?= htmlspecialchars($product['id']) ?>">
+                        <div style="margin-bottom: 30px;">
+                            <label style="font-weight: bold; font-size: 16px;">Quantity:</label>
+                            <select name="unit" style="padding: 10px; margin-left: 10px; font-size: 16px; border-radius: 5px;">
+                                <?php 
+                                $max = $product['stock'] > 10 ? 10 : $product['stock'];
+                                for($i=1; $i<=$max; $i++) echo "<option value='$i'>$i</option>"; 
+                                ?>
+                            </select>
+                        </div>
+                        <button type="submit" name="add_to_cart" class="btn-primary" style="padding: 15px 40px; background: #000; color: #fff; border: none; cursor: pointer; font-size: 16px; font-weight: bold; border-radius: 5px; width: 100%; transition: background 0.3s;">
+                            ADD TO CART
+                        </button>
+                    </form>
+                <?php else: ?>
                     <div style="margin-bottom: 30px;">
-                        <label style="font-weight: bold; font-size: 16px;">Quantity:</label>
-                        <select name="unit" style="padding: 10px; margin-left: 10px; font-size: 16px; border-radius: 5px;">
-                            <?php 
-                            $max = $product['stock'] > 10 ? 10 : $product['stock'];
-                            for($i=1; $i<=$max; $i++) echo "<option value='$i'>$i</option>"; 
-                            ?>
-                        </select>
+                        <p style="font-size: 16px; color: #dc3545; font-weight: bold;">⚠️ This item is currently OUT OF STOCK.</p>
                     </div>
-                    <button type="submit" name="add_to_cart" class="btn-primary" style="padding: 15px 40px; background: #000; color: #fff; border: none; cursor: pointer; font-size: 16px; font-weight: bold; border-radius: 5px; width: 100%; transition: background 0.3s;">
-                        ADD TO CART
+                    <button disabled style="padding: 15px 40px; background: #cccccc; color: #666666; border: none; cursor: not-allowed; font-size: 16px; font-weight: bold; border-radius: 5px; width: 100%;">
+                        OUT OF STOCK
                     </button>
-                </form>
+                <?php endif; ?>
             </div>
         </div>
     </div>
