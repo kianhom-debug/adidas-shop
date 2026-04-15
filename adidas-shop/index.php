@@ -37,6 +37,8 @@ require_once 'config.php';
                     </form>
                     
                 <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="member/history.php" style="color: #fff; text-decoration: none; font-weight: bold;">My Orders</a>
+                    
                     <a href="member/profile.php" class="user-icon">👤 <?= htmlspecialchars($_SESSION['user_name']) ?></a>
                     <a href="member/logout.php" class="logout-btn">Logout</a>
                 <?php else: ?>
