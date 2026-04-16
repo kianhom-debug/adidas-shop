@@ -1,36 +1,12 @@
 <?php
-session_start();
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once '../config.php';
 require_once 'auth_check.php';
+require_once 'resize.image.php';
 
-function resize_image($file, $target) {
-    list($w, $h) = getimagesize($file);
-    $new_w = 300;
-    $new_h = 300;
-
-    $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-    if ($ext == 'png') {
-        $src = imagecreatefrompng($file);
-    } else {
-        $src = imagecreatefromjpeg($file);
-    }
-    
-    $dst = imagecreatetruecolor($new_w, $new_h);
-    
-    imagealphablending($dst, false);
-    imagesavealpha($dst, true);
-
-    imagecopyresampled($dst, $src, 0, 0, 0, 0, $new_w, $new_h, $w, $h);
-    
-    if ($ext == 'png') {
-        imagepng($dst, $target);
-    } else {
-        imagejpeg($dst, $target, 90);
-    }
-    
-    imagedestroy($src);
-    imagedestroy($dst);
-}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id          = trim($_POST['id'] ?? '');
@@ -103,9 +79,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $pdo->commit();
         echo "<script>alert('Product added successfully!'); window.location='manage_product.php';</script>";
         
-    } catch (Exception $e) {
-        $pdo->rollBack();
-        echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
+        } catch (Exception $e) {
+            if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        
+        echo "<script>alert('Error: " . addslashes($e->getMessage()) . "');</script>";
     }
 }
 

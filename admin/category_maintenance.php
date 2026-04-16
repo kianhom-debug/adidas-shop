@@ -19,16 +19,15 @@ if (isset($_POST['add_category'])) {
         exit();
     }
 }
-if (isset($_GET['delete'])) {
+if (isset($_POST['delete_category'])) {
     try {
-        $pdo->prepare("DELETE FROM category WHERE id = ?")->execute([$_GET['delete']]);
+        $pdo->prepare("DELETE FROM category WHERE id = ?")->execute([$_POST['delete_id']]);
         header("Location: category_maintenance.php?msg=deleted");
         exit();
     } catch (Exception $e) {
         $error = "Cannot delete: This category is being used by products.";
     }
 }
-
 $categories = $pdo->query("SELECT * FROM category")->fetchAll();
 ?>
 
@@ -94,6 +93,9 @@ $categories = $pdo->query("SELECT * FROM category")->fetchAll();
                             <td><strong><?= htmlspecialchars($cat['name']) ?></strong></td>
                             <td>
                                 <a href="?delete=<?= $cat['id'] ?>" class="btn-delete" onclick="return confirm('Warning: This may affect products in this category. Continue?')">DELETE</a>
+                                    <form action="category_maintenance.php" method="POST" style="display:inline;" onsubmit="return confirm('Warning: This may affect products. Continue?')">
+                                        <input type="hidden" name="delete_id" value="<?= $cat['id'] ?>">
+                                    </form>
                             </td>
                         </tr>
                         <?php endforeach; ?>

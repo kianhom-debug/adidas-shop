@@ -2,6 +2,8 @@
 session_start();
 require_once '../config.php';
 require_once 'auth_check.php';
+require_once 'resize.image.php';
+require_once 'delete_product.php';
 
 $id = $_GET['id'] ?? '';
 if (empty($id)) {
@@ -26,17 +28,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $category_id = $_POST['category_id'];
     $name        = trim($_POST['name']);
     $price       = $_POST['price'];
-    $stock       = $_POST['stock'];
+    $stock       = intval($_POST['stock']);
     $type        = $_POST['type'];
     $photo       = $product['photo']; 
 
     if (!empty($_FILES['main_photo']['name'])) {
-        $new_filename = uniqid("main_") . "." . pathinfo($_FILES['main_photo']['name'], PATHINFO_EXTENSION);
-        if (move_uploaded_file($_FILES['main_photo']['tmp_name'], "../uploads/products/" . $new_filename)) {
+        $check = getimagesize($_FILES['main_photo']['tmp_name']);
+        if ($check !== false) {
+            $ext = strtolower(pathinfo($_FILES['main_photo']['name'], PATHINFO_EXTENSION));
+            $new_filename = uniqid("main_") . "." . $ext;
+            $target_path = "../uploads/products/" . $new_filename;
+        
+        if (move_uploaded_file($_FILES['main_photo']['tmp_name'], $target_path)) {
+            resize_image($target_path, $target_path); // Resize the new image
             $photo = $new_filename;
         }
+    } else {
+        $error = "Invalid image file.";
     }
-
+}
     try {
         $sql = "UPDATE product SET category_id = ?, name = ?, price = ?, stock = ?, type = ?, photo = ? WHERE id = ?";
         $stmt = $pdo->prepare($sql);
@@ -48,6 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = "Update failed: " . $e->getMessage();
     }
 }
+
+
 
 $categories = $pdo->query("SELECT * FROM category")->fetchAll();
 ?>
@@ -86,16 +98,17 @@ $categories = $pdo->query("SELECT * FROM category")->fetchAll();
             <main class="admin-main">
                 <div class="admin-card">
                     <div class="form-title">Edit Product Details (ID: #<?= htmlspecialchars($product['id']) ?>)</div>
-                    
-                    <?php if(isset($error)): ?>
-                        <p style="color:red; background:#fee; padding:10px; border-left: 5px solid red;"><?= $error ?></p>
-                    <?php endif; ?>
+                
+                        <?php if(isset($error)): ?>
+                            <p style="color:red; background:#fee; padding:10px; border-left: 5px solid red;"><?= $error ?></p>
+                        <?php endif; ?>
 
-                    <form action="" method="POST" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label>Product Name</label>
-                            <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($product['name']) ?>" required>
-                        </div>
+                    <form action="edit_product.php?id=<?= urlencode($id) ?>" method="POST" enctype="multipart/form-data">
+
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($product['name']) ?>" required>
+                    </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <div class="form-group">

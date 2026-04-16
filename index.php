@@ -19,15 +19,17 @@ require_once 'config.php';
             </div>
             <nav class="main-nav">
                 <ul>
-                    <li><a href="products.php?type=Shoes">SHOES</a></li>
-                    <li><a href="products.php?category_id=3">CLOTHING</a></li>
-                    <li><a href="products.php?category_id=1">MEN</a></li>
-                    <li><a href="products.php?category_id=2">WOMEN</a></li>
-                    <li><a href="products.php?show=all">ALL</a></li>
+                    <li><a href="/member/product_list.php?type=Shoes">SHOES</a></li>
+                    <li><a href="/member/product_list.php?type=Clothing">CLOTHING</a></li>
+        
+                    <li><a href="/member/product_list.php?category_id=1">MEN</a></li>
+                    <li><a href="/member/product_list.php?category_id=2">WOMEN</a></li>
+        
+                    <li><a href="/member/product_list.php?show=all">ALL</a></li>
                 </ul>
             </nav>
             <div class="header-actions" style="display: flex; align-items: center; gap: 15px;">
-                <form action="products.php" method="GET" style="display: flex; align-items: center;">
+                <form action="/member/product_list.php" method="GET" style="display: flex; align-items: center;">
                     <input type="text" name="search" placeholder="Search products..." 
                            style="padding: 7px; border: 1px solid #ccc; border-radius: 4px;">
                     <button type="submit" class="search-btn" style="background: none; border: none; cursor: pointer; padding-left: 5px;">🔍</button>
@@ -78,7 +80,7 @@ require_once 'config.php';
                     <?php foreach ($products as $product): ?>
                         <div class="product-card">
                             <div class="product-image">
-                                <img src="uploads/products/<?= htmlspecialchars($product['photo']) ?>.jpeg" 
+                                <img src="uploads/products/<?= htmlspecialchars($product['photo']) ?>" 
                                      alt="<?= htmlspecialchars($product['name']) ?>" 
                                      style="width:100%; height:200px; object-fit:cover;">
                             </div>

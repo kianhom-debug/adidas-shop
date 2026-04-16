@@ -2,8 +2,8 @@
 session_start();
 require_once '../config.php';
 require_once 'auth_check.php';
+require_once 'resize.image.php';
 
-// login check 
 
 $search = $_GET['search'] ?? '';
 
@@ -80,7 +80,7 @@ try {
                         <tr>
                             <td>
                                 <?php if($p['photo']): ?>
-                                    <img src="../uploads/products/<?= $p['photo'] ?>.jpeg" class="admin-thumb" style="width:50px; height:50px; object-fit:cover;">
+                                    <img src="../uploads/products/<?= $p['photo'] ?>" class="admin-thumb" style="width:50px; height:50px; object-fit:cover;">
                                 <?php else: ?>
                                     <div class="no-image-placeholder">No Image</div>
                                 <?php endif; ?>
