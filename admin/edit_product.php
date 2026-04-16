@@ -3,7 +3,6 @@ session_start();
 require_once '../config.php';
 require_once 'auth_check.php';
 require_once 'resize.image.php';
-require_once 'delete_product.php';
 
 $id = $_GET['id'] ?? '';
 if (empty($id)) {
@@ -147,7 +146,7 @@ $categories = $pdo->query("SELECT * FROM category")->fetchAll();
                             
                             <div style="margin-top: 15px; border: 1px solid #eee; padding: 10px; display: inline-block; background: #fafafa;">
                                 <p style="font-size: 12px; color: #888; margin-bottom: 5px;">Current Preview:</p>
-                                <img src="../uploads/products/<?= $product['photo'] ?>.jpeg" style="max-width: 150px; border: 1px solid #ddd; display: block;">
+                                <img src="../uploads/products/<?= $product['photo'] ?>" style="max-width: 150px; border: 1px solid #ddd; display: block;">
                             </div>
                         </div>
 
