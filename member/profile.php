@@ -35,10 +35,13 @@ unset($_SESSION['profile_success'], $_SESSION['profile_error']);
             </div>
             <nav class="main-nav">
                 <ul>
-                    <li><a href="#">SHOES</a></li>
-                    <li><a href="#">MEN</a></li>
-                    <li><a href="#">WOMEN</a></li>
-                    <li><a href="#">KIDS</a></li>
+                    <li><a href="/member/product_list.php?type=Shoes">SHOES</a></li>
+                    <li><a href="/member/product_list.php?type=Clothing">CLOTHING</a></li>
+        
+                    <li><a href="/member/product_list.php?category_id=1">MEN</a></li>
+                    <li><a href="/member/product_list.php?category_id=2">WOMEN</a></li>
+        
+                    <li><a href="/member/product_list.php?show=all">ALL</a></li>
                 </ul>
             </nav>
             <div class="header-actions">
