@@ -36,33 +36,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id          = trim($_POST['id'] ?? '');
     $category_id = trim($_POST['category_id'] ?? '');
     $name        = trim($_POST['name'] ?? '');
-    $price       = $_POST['price'] ?? 0;
-    $stock       = $_POST['stock'] ?? 0;
+    $price       = floatval($_POST['price'] ?? 0); 
+    $stock       = intval($_POST['stock'] ?? 0);   
     $type        = $_POST['type'] ?? '';
-    
-    $photo = "";
-   if (!empty($_FILES['extra_photos']['name'][0])) {
-        foreach ($_FILES['extra_photos']['tmp_name'] as $key => $tmp_name) {
-            if ($_FILES['extra_photos']['error'][$key] == 0) {
-                $ext = pathinfo($_FILES['extra_photos']['name'][$key], PATHINFO_EXTENSION);
-                $new_filename = uniqid("img_") . "." . $ext; 
-                $target_extra = "../uploads/products/" . $new_filename;
-
-                if (move_uploaded_file($tmp_name, $target_extra)) {
-                    resize_image($target_extra, $target_extra); 
-
-                    $sql_photo = "INSERT INTO product_photo (product_id, filename) VALUES (?, ?)";
-                    $pdo->prepare($sql_photo)->execute([$id, $new_filename]);
-                }
-            }
-        }
-    }
+    $photo       = "";
 
     try {
+        if (empty($id) || empty($name)) {
+            throw new Exception("Product ID and Name are required.");
+        }
+        if ($price < 0) {
+            throw new Exception("Price cannot be negative (RM 0.00 is minimum).");
+        }
+        if ($stock < 0) {
+            throw new Exception("Stock cannot be negative.");
+        }
+
+        if (!empty($_FILES['main_photo']['name'])) {
+            $check = getimagesize($_FILES['main_photo']['tmp_name']);
+            if($check === false) {
+                throw new Exception("File is not a valid image.");
+            }
+
+            $ext = strtolower(pathinfo($_FILES['main_photo']['name'], PATHINFO_EXTENSION));
+            $main_filename = uniqid("main_") . "." . $ext;
+            $target_main = "../uploads/products/" . $main_filename;
+            
+            if (move_uploaded_file($_FILES['main_photo']['tmp_name'], $target_main)) {
+                resize_image($target_main, $target_main);
+                $photo = $main_filename;
+            }
+        }
+
+        if (empty($photo)) {
+            throw new Exception("Please upload a valid main photo.");
+        }
         $pdo->beginTransaction();
 
-        if (empty($id) || $price <= 0 || empty($photo)) {
-            throw new Exception("Invalid input data or missing main photo.");
+        $checkId = $pdo->prepare("SELECT id FROM product WHERE id = ?");
+        $checkId->execute([$id]);
+        if ($checkId->fetch()) {
+            throw new Exception("Product ID '$id' already exists in inventory.");
         }
 
         $sql = "INSERT INTO product (id, category_id, name, price, stock, type, photo) 
@@ -72,13 +86,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (!empty($_FILES['extra_photos']['name'][0])) {
             foreach ($_FILES['extra_photos']['tmp_name'] as $key => $tmp_name) {
-                
                 if ($_FILES['extra_photos']['error'][$key] == 0) {
-                    $ext = pathinfo($_FILES['extra_photos']['name'][$key], PATHINFO_EXTENSION);
+                    $ext = strtolower(pathinfo($_FILES['extra_photos']['name'][$key], PATHINFO_EXTENSION));
                     $new_filename = uniqid("img_") . "." . $ext; 
+                    $target_path = "../uploads/products/" . $new_filename;
                     
-                    if (move_uploaded_file($tmp_name, "../uploads/products/" . $new_filename)) {
-                    
+                    if (move_uploaded_file($tmp_name, $target_path)) {
+                        resize_image($target_path, $target_path);
                         $sql_photo = "INSERT INTO product_photo (product_id, filename) VALUES (?, ?)";
                         $pdo->prepare($sql_photo)->execute([$id, $new_filename]);
                     }
@@ -86,16 +100,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-    
         $pdo->commit();
         echo "<script>alert('Product added successfully!'); window.location='manage_product.php';</script>";
         
     } catch (Exception $e) {
-    
         $pdo->rollBack();
         echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
     }
 }
+
 
 $categories = $pdo->query("SELECT * FROM category")->fetchAll();
 ?>
@@ -172,12 +185,12 @@ $categories = $pdo->query("SELECT * FROM category")->fetchAll();
 
                             <div class="form-group">
                                 <label>Price (RM)</label>
-                                <input type="number" name="price" class="form-control" step="0.01" required>
+                                <input type="number" name="price" class="form-control" step="0.01" min="0" required>
                             </div>
 
                             <div class="form-group">
                                 <label>Stock Quantity</label>
-                                <input type="number" name="stock" class="form-control" required>
+                                <input type="number" name="stock" class="form-control" min="0" required>
                             </div>
                         </div>
 

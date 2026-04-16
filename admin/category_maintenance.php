@@ -5,14 +5,20 @@ require_once 'auth_check.php';
 
 
 if (isset($_POST['add_category'])) {
-    $name = $_POST['cat_name'];
-    if (!empty($name)) {
+    $name = trim($_POST['cat_name']);
+    
+    if (empty($name)) {
+        $error = "Category name cannot be empty.";
+    } 
+    elseif (is_numeric($name)) {
+        $error = "Category name cannot be numbers only.";
+    } 
+    else {
         $pdo->prepare("INSERT INTO category (name) VALUES (?)")->execute([$name]);
         header("Location: category_maintenance.php?msg=added");
         exit();
     }
 }
-
 if (isset($_GET['delete'])) {
     try {
         $pdo->prepare("DELETE FROM category WHERE id = ?")->execute([$_GET['delete']]);
