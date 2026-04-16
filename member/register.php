@@ -11,21 +11,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
     $confirm = $_POST['confirm_password'];
 
-    if (empty($name) || empty($email) || empty($password)) {
-        $error = "All fields are required.";
-    } elseif ($password != $confirm) {
-        $error = "Passwords do not match!";
-    } else {
-        $hash = password_hash($password, PASSWORD_DEFAULT);
+    // Validation
+    $errors = [];
+
+    if (empty($name)) {
+        $errors[] = "Full name is required.";
+    } 
+
+    if (empty($email)) {
+        $errors[] = "Email address is required.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid email format.";
+    }
+
+    if (empty($password)) {
+        $errors[] = "Password is required.";
+    } elseif (strlen($password) < 6) {
+        $errors[] = "Password must be at least 6 characters. (Current length: " . strlen($password) . ")";
+    }
+
+    if ($password !== $confirm) {
+        $errors[] = "Passwords do not match.";
+    }
+
+    if (empty($errors)) {
+        // Check if email already exists
         $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
         if ($stmt->rowCount() > 0) {
             $error = "Email already exists!";
         } else {
+            $hash = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-            $stmt->execute([$name, $email, $hash]);
-            $success = "Registration successful! <a href='login.php'>Login here</a>";
+            if ($stmt->execute([$name, $email, $hash])) {
+                $success = "Registration successful! <a href='login.php'>Login here</a>";
+            } else {
+                $error = "Registration failed. Please try again.";
+            }
         }
+    } else {
+        $error = implode("<br>", $errors);
     }
 }
 ?>
@@ -47,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             
             <?php if ($error): ?>
-                <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
+                <div class="alert alert-error"><?= $error ?></div>
             <?php endif; ?>
             
             <?php if ($success): ?>
@@ -56,16 +81,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             <form method="POST">
                 <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" name="name" required>
+                    <label>Full Name (max 100 characters)</label>
+                    <input type="text" name="name" maxlength="100" required>
                 </div>
                 <div class="form-group">
                     <label>Email Address</label>
                     <input type="email" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" name="password" required>
+                    <label>Password (minimum 6 characters)</label>
+                    <input type="password" name="password" minlength="6" required>
                 </div>
                 <div class="form-group">
                     <label>Confirm Password</label>
