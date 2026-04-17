@@ -113,7 +113,7 @@ $categories = $pdo->query("SELECT * FROM category")->fetchAll();
                             <input type="text" name="name" class="form-control" required>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px;">
                             <div class="form-group">
                                 <label>Type</label>
                                     <select name="type" class="form-control">
@@ -133,7 +133,7 @@ $categories = $pdo->query("SELECT * FROM category")->fetchAll();
                             </div>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
                             <div class="form-group">
                                 <label>Main Photo</label>
                                 <input type="file" name="main_photo" class="form-control" accept="image/*" required>
