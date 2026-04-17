@@ -1,6 +1,6 @@
 <?php
 
-$page_title = "ADIDAS - Manage Products";
+$page_title = "ADIDAS - Add Product";
 include 'admin_header.php';
 require_once 'resize.image.php';
 
@@ -18,11 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (empty($id) || empty($name)) {
             throw new Exception("Product ID and Name are required.");
         }
-        if ($price < 0) {
-            throw new Exception("Price cannot be negative (RM 0.00 is minimum).");
+        if ($price < 0.01) {
+            throw new Exception("Price cannot be negative (RM 0.01 is minimum).");
         }
-        if ($stock < 0) {
-            throw new Exception("Stock cannot be negative.");
+        if ($stock < 0 || $stock == 0) {
+            throw new Exception("Stock cannot be zero or negative.");
         }
 
         if (!empty($_FILES['main_photo']['name'])) {

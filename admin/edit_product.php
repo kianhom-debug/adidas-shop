@@ -1,5 +1,5 @@
 <?php
-$page_title = "ADIDAS - Manage Products";
+$page_title = "ADIDAS - Edit Product";
 include 'admin_header.php';
 require_once 'resize.image.php';
 

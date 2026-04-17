@@ -38,8 +38,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <ul class="admin-nav-list">
                     <li><a href="index.php" class="<?php echo $current_page == 'index.php' ? 'active' : ''; ?>">🏠 Dashboard</a></li>
                     <li><a href="manage_product.php" class="<?php echo $current_page == 'manage_product.php' ? 'active' : ''; ?>">📦 Manage Products</a></li>
-                    <li><a href="add_product.php" class="<?php echo $current_page == 'add_product.php' ? 'active' : ''; ?>">➕ Add Product</a></li>
-                    <li><a href="category_maintenance.php" class="<?php echo $current_page == 'category_maintenance.php' ? 'active' : ''; ?>">📂 Categories</a></li>
+                    <li><a href="add_product.php" class="<?php echo $current_page == 'add_product.php' ? 'active' : ''; ?>">➕ Add New Product</a></li>
+                    <li><a href="category_maintenance.php" class="<?php echo $current_page == 'category_maintenance.php' ? 'active' : ''; ?>">📂 Category Maintenance</a></li>
                     <li><a href="manage_orders.php" class="<?php echo $current_page == 'manage_orders.php' ? 'active' : ''; ?>">🛒 Orders</a></li>
                 </ul>
             </aside>

@@ -1,5 +1,5 @@
 <?php
-$page_title = "ADIDAS - Manage Products";
+$page_title = "ADIDAS - Category Maintenance";
 include 'admin_header.php';
 
 
