@@ -1,7 +1,6 @@
 <?php
-session_start();
-
-require_once '../config.php'; 
+$page_title = "ADIDAS - Manage Orders";
+include 'admin_header.php';
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_id'])) {
@@ -48,40 +47,7 @@ $stmt = $pdo->prepare("
 $stmt->execute();
 $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>ADIDAS ADMIN - Manage Orders</title>
-    <link rel="stylesheet" href="../css/style.css">
-</head>
-<body>
-    <header class="main-header">
-        <div class="container">
-            <div class="logo">
-                <a href="../index.php">ADIDAS ADMIN</a>
-            </div>
-            <div class="header-actions">
-                <span>Welcome, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin') ?></span>
-                <a href="../member/logout.php" class="logout-btn">Logout</a>
-            </div>
-        </div>
-    </header>
 
-    <div class="container">
-        <div class="admin-layout"> 
-            <aside class="admin-sidebar">
-                <h3>Management</h3>
-                <ul class="admin-nav-list">
-                    <li><a href="index.php">🏠 Dashboard</a></li>
-                    <li><a href="manage_product.php">📦 Manage Products</a></li>
-                    <li><a href="add_product.php">➕ Add New Product</a></li>
-                    <li><a href="category_maintenance.php">📂 Category Maintenance</a></li>
-                    <li><a href="manage_orders.php" class="active">🛒 Manage Orders</a></li>
-                </ul>
-            </aside>
-
-            <main class="admin-main">
                 <h2 class="section-title" style="text-align:left;">CUSTOMER ORDERS</h2>
                 
                 <?php if (isset($_SESSION['success'])): ?>
@@ -131,8 +97,6 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php endif; ?>
                     </tbody>
                 </table>
-            </main>
-        </div>
-    </div>
-</body>
-</html>
+<?php 
+    include '../footer.php'; 
+?>

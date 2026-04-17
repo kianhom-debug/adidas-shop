@@ -1,7 +1,6 @@
 <?php
-session_start();
-require_once '../config.php';
-require_once 'auth_check.php';
+$page_title = "ADIDAS - Manage Products";
+include 'admin_header.php';
 require_once 'resize.image.php';
 
 $id = $_GET['id'] ?? '';
@@ -63,41 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $categories = $pdo->query("SELECT * FROM category")->fetchAll();
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>ADIDAS ADMIN - Edit Product</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-    <header class="main-header">
-        <div class="container">
-            <div class="logo"><a href="../index.php">ADIDAS ADMIN</a></div>
-            <div class="header-actions">
-                <span>Welcome, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin') ?></span>
-                <a href="../member/logout.php" class="logout-btn">Logout</a>
-            </div>
-        </div>
-    </header>
-
-    <div class="container">
-        <div class="admin-layout">
-            <aside class="admin-sidebar">
-                <h3>Management</h3>
-                <ul class="admin-nav-list">
-                    <li><a href="index.php">🏠 Dashboard</a></li>
-                    <li><a href="manage_product.php" class="active">📦 Manage Products</a></li>
-                    <li><a href="add_product.php">➕ Add New Product</a></li>
-                    <li><a href="category_maintenance.php">📂 Category Maintenance</a></li>
-                </ul>
-            </aside>
-
-            <main class="admin-main">
-                <div class="admin-card">
-                    <div class="form-title">Edit Product Details (ID: #<?= htmlspecialchars($product['id']) ?>)</div>
-                
+                <h2 class="section-title" style="text-align:left;">EDIT PRODUCT DETAILS</h2>
                         <?php if(isset($error)): ?>
                             <p style="color:red; background:#fee; padding:10px; border-left: 5px solid red;"><?= $error ?></p>
                         <?php endif; ?>
@@ -159,10 +124,8 @@ $categories = $pdo->query("SELECT * FROM category")->fetchAll();
                             </a>
                         </div>
                     </form>
-                </div>
-            </main>
-        </div>
-    </div>
-</body>
-</html>
-<?php include '../footer.php'; ?>
+
+
+<?php 
+include '../footer.php'; 
+?>

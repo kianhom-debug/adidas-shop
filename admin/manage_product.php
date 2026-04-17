@@ -1,9 +1,6 @@
 <?php
-session_start();
-require_once '../config.php';
-require_once 'auth_check.php';
-require_once 'resize.image.php';
-
+$page_title = "ADIDAS - Manage Products";
+include 'admin_header.php';
 
 $search = $_GET['search'] ?? '';
 
@@ -22,40 +19,6 @@ try {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>ADIDAS - Manage Products</title>
-    <link rel="stylesheet" href="../css/style.css">
-</head>
-<body>
-    <header class="main-header">
-        <div class="container">
-            <div class="logo">
-                <a href="../index.php">ADIDAS ADMIN</a>
-            </div>
-            <div class="header-actions">
-                <span>Welcome, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin') ?></span>
-                <a href="../member/logout.php" class="logout-btn">Logout</a>
-            </div>
-        </div>
-    </header>
-
-    <div class="container">
-        <div class="admin-layout"> 
-            <aside class="admin-sidebar">
-                <h3>Management</h3>
-                <ul class="admin-nav-list">
-                    <li><a href="index.php">🏠 Dashboard</a></li>
-                    <li><a href="manage_product.php" class="active">📦 Manage Products</a></li>
-                    <li><a href="add_product.php">➕ Add New Product</a></li>
-                    <li><a href="category_maintenance.php">📂 Category Maintenance</a></li>
-                    <li><a href="manage_orders.php">🛒 Manage Orders</a></li>
-                </ul>
-            </aside>
-
-            <main class="admin-main">
                 <h2 class="section-title" style="text-align:left;">PRODUCT INVENTORY</h2>
                 
                 <form action="manage_product.php" method="GET" class="admin-search-bar" style="display:flex; gap:10px; margin-bottom:20px;">
@@ -108,11 +71,7 @@ try {
                         <?php endif; ?>
                     </tbody>
                 </table>
-            </main>
-        </div>
-    </div>
-</body>
-</html>
+            
 <?php 
     include '../footer.php'; 
 ?>

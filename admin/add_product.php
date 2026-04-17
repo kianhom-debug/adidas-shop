@@ -1,10 +1,7 @@
 <?php
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-require_once '../config.php';
-require_once 'auth_check.php';
+$page_title = "ADIDAS - Manage Products";
+include 'admin_header.php';
 require_once 'resize.image.php';
 
 
@@ -92,44 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $categories = $pdo->query("SELECT * FROM category")->fetchAll();
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>ADIDAS ADMIN - Add Product</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-    <header class="main-header">
-        <div class="container">
-            <div class="logo">
-                <a href="../index.php">ADIDAS ADMIN</a>
-            </div>
-            <div class="header-actions">
-                <span>Welcome, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin') ?></span>
-                <a href="../member/logout.php" class="logout-btn">Logout</a>
-            </div>
-        </div>
-    </header>
-
-    <div class="container">
-        <div class="admin-layout">
-            <aside class="admin-sidebar">
-                <h3>Management</h3>
-                <ul class="admin-nav-list">
-                    <li><a href="index.php">🏠 Dashboard</a></li>
-                    <li><a href="manage_product.php">📦 Manage Products</a></li>
-                    <li><a href="add_product.php" class="active">➕ Add New Product</a></li>
-                    <li><a href="category_maintenance.php">📂 Category Maintenance</a></li>
-                    <li><a href="manage_orders.php">🛒 Manage Orders</a></li>
-                </ul>
-            </aside>
-
-            <main class="admin-main">
-                <div class="admin-card">
-                    <div class="form-title">ADD NEW ADIDAS PRODUCT</div>
-                    
+                <h2 class="section-title" style="text-align:left;">ADD NEW PRODUCT</h2>
                     <form action="add_product.php" method="POST" enctype="multipart/form-data">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <div class="form-group">
@@ -189,18 +149,13 @@ $categories = $pdo->query("SELECT * FROM category")->fetchAll();
                             <button type="submit" class="btn-shop" style="width: 100%; border: 3px solid #000; cursor: pointer;">UPLOAD TO INVENTORY</button>
                         </div>
                     </form>
-                </div>
-            </main>
-        </div>
-    </div>
 
     <script>
         $('form').on('submit', function() {
             return confirm('Confirm adding this product to Adidas Inventory?');
         });
     </script>
-</body>
-</html>
+
 <?php 
     include '../footer.php'; 
 ?>
