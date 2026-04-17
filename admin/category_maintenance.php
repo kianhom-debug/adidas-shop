@@ -57,12 +57,14 @@ $categories = $pdo->query("SELECT * FROM category")->fetchAll();
                         <tr>
                             <td>#<?= $cat['id'] ?></td>
                             <td><strong><?= htmlspecialchars($cat['name']) ?></strong></td>
-                            <td>
-                                <a href="?delete=<?= $cat['id'] ?>" class="btn-delete" onclick="return confirm('Warning: This may affect products in this category. Continue?')">DELETE</a>
+                                <td>
                                     <form action="category_maintenance.php" method="POST" style="display:inline;" onsubmit="return confirm('Warning: This may affect products. Continue?')">
                                         <input type="hidden" name="delete_id" value="<?= $cat['id'] ?>">
+                                        <button type="submit" name="delete_category" class="btn-delete" style="color:red; border:none; background:none; cursor:pointer;">
+                                            DELETE
+                                        </button>
                                     </form>
-                            </td>
+                                </td>
                         </tr>
                         <?php endforeach; ?>
                         <?php if (empty($categories)): ?>
