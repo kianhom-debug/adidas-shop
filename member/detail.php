@@ -15,15 +15,24 @@ if (!isset($_GET['id'])) {
 $orderId = (int)$_GET['id'];
 $userId = $_SESSION['user_id'];
 
-$stmt = $pdo->prepare("SELECT * FROM `order` WHERE id = ? AND user_id = ?");
-$stmt->execute([$orderId, $userId]);
+$stmtUser = $pdo->prepare("SELECT role FROM users WHERE id = ?");
+$stmtUser->execute([$userId]);
+$isAdmin = ($stmtUser->fetchColumn() === 'admin');
+
+if ($isAdmin) {
+    $stmt = $pdo->prepare("SELECT * FROM `order` WHERE id = ?");
+    $stmt->execute([$orderId]);
+} else {
+    $stmt = $pdo->prepare("SELECT * FROM `order` WHERE id = ? AND user_id = ?");
+    $stmt->execute([$orderId, $userId]);
+}
+
 $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$order) {
-    header('Location: history.php');
+    header('Location: ' . ($isAdmin ? '../admin/manage_orders.php' : 'history.php'));
     exit;
 }
-
 $stmt = $pdo->prepare("
     SELECT i.*, p.name 
     FROM item AS i 
@@ -45,7 +54,11 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="container">
             <div class="logo"><a href="../index.php">ADIDAS</a></div>
             <div class="header-actions">
-                <a href="history.php">← Back to History</a>
+                <?php if ($isAdmin): ?>
+                    <a href="../admin/manage_orders.php" style="color: white; font-weight: bold;">← Back to Manage Orders</a>
+                <?php else: ?>
+                    <a href="history.php">← Back to History</a>
+                <?php endif; ?>
             </div>
         </div>
     </header>
