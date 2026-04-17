@@ -129,7 +129,7 @@ $categories = $pdo->query("SELECT * FROM category")->fetchAll();
 
                             <div class="form-group">
                                 <label>Stock Quantity</label>
-                                <input type="number" name="stock" class="form-control" min="0" required>
+                                <input type="number" name="stock" class="form-control" min="1" required>
                             </div>
                         </div>
 
