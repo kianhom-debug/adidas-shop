@@ -40,10 +40,12 @@ try {
         <?php foreach ($members as $u): ?>
         <tr>
             <td>
-                <?php if(!empty($u['photo'])): ?>
-                    <img src="../uploads/profiles/<?= htmlspecialchars($u['photo']) ?>" class="admin-thumb" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+                <?php if (!empty($u['photo'])): ?>
+                    <img src="../uploads/profiles/<?= htmlspecialchars($u['photo']) ?>" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
                 <?php else: ?>
-                    <div class="no-image-placeholder" style="width:50px; height:50px; line-height:50px; background:#eee; font-size:10px; border-radius:50%; text-align:center; color:#888;">No Photo</div>
+                    <div class="profile-photo-placeholder">
+                        <?= strtoupper(substr($u['name'], 0, 1)) ?>
+                    </div>
                 <?php endif; ?>
             </td>
             <td>#<?= $u['id'] ?></td>
