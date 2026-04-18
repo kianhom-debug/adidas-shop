@@ -342,6 +342,13 @@
     padding: 40px;
 }
 
+.captcha-question {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
 .logo {
     text-align: center;
     margin-bottom: 30px;
