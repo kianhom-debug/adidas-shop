@@ -73,18 +73,25 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <td><?= htmlspecialchars($o['user_name']) ?></td>
                             <td><?= $o['datetime'] ?></td>
                             <td><?= number_format($o['total'], 2) ?></td>
-                            <td>
+<td>
                                 <div style="display: flex; gap: 10px; align-items: center;">
-                                    <form method="POST" style="display:flex; gap:5px; align-items: center; margin:0;">
-                                        <input type="hidden" name="update_id" value="<?= $o['id'] ?>">
-                                        <select name="status" class="form-control" style="width: auto; padding: 5px;">
-                                            <option value="Pending" <?= $o['status'] == 'Pending' ? 'selected' : '' ?>>Pending</option>
-                                            <option value="Completed" <?= $o['status'] == 'Completed' ? 'selected' : '' ?>>Completed</option>
-                                            <option value="Cancelled" <?= $o['status'] == 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
-                                        </select>
-                                        <button type="submit" class="btn-shop" style="padding: 5px 10px; font-size: 12px; border: none; cursor: pointer;">UPDATE</button>
-                                        <a href="../member/detail.php?id=<?= $o['id'] ?>" style="background: #a0dfff; color: black; padding: 5px 10px; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;">DETAIL</a>
-                                    </form>
+                                    <a href="../member/detail.php?id=<?= $o['id'] ?>" style="background: #0066cc; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;">VIEW DETAIL</a>
+                                    
+                                    <?php if ($o['status'] === 'Cancelled'): ?>
+                                        <span style="background: #f8d7da; color: #721c24; padding: 5px 10px; border-radius: 3px; font-size: 12px; font-weight: bold; border: 1px solid #f5c6cb;">
+                                            CANCELLED (LOCKED)
+                                        </span>
+                                    <?php else: ?>
+                                        <form method="POST" style="display:flex; gap:5px; align-items: center; margin:0;">
+                                            <input type="hidden" name="update_id" value="<?= $o['id'] ?>">
+                                            <select name="status" class="form-control" style="width: auto; padding: 5px;">
+                                                <option value="Pending" <?= $o['status'] == 'Pending' ? 'selected' : '' ?>>Pending</option>
+                                                <option value="Completed" <?= $o['status'] == 'Completed' ? 'selected' : '' ?>>Completed</option>
+                                                <option value="Cancelled" <?= $o['status'] == 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                                            </select>
+                                            <button type="submit" class="btn-shop" style="padding: 5px 10px; font-size: 12px; border: none; cursor: pointer;">UPDATE</button>
+                                        </form>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                         </tr>
