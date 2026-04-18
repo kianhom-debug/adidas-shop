@@ -9,7 +9,22 @@ require_once '../RememberToken.php';
 $error = '';
 $captcha_question = CaptchaHelper::generateMathCaptcha();
 
+$max_attempts = 3;
+$lock_time_duration = 300; // 5 minutes
+
+if (!isset($_SESSION['login_attempts'])) {
+    $_SESSION['login_attempts'] = 0;
+}
+
+if (!isset($_SESSION['lock_time'])) {
+    $_SESSION['lock_time'] = 0;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if ($_SESSION['lock_time'] > time()) {
+        $remaining = $_SESSION['lock_time'] - time();
+        $error = "Too many failed attempts. Try again in $remaining seconds.";
+    } else {
     $email = $_POST['email'];
     $password = $_POST['password'];
     $captcha_answer = $_POST['captcha'] ?? '';
@@ -24,6 +39,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
+            $_SESSION['login_attempts'] = 0;
+            $_SESSION['lock_time'] = 0;
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_email'] = $user['email'];
@@ -42,7 +59,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             exit;
         } else {
-            $error = "Invalid email or password!";
+            $_SESSION['login_attempts']++;
+
+            if($_SESSION['login_attempts'] >= $max_attempts) {
+                $_SESSION['lock_time'] = time() + $lock_time_duration;
+                $error = "Too many failed attempts. Account locked for 5 minutes.";
+            } else {
+                $remaining_attempts = $max_attempts - $_SESSION['login_attempts'];
+                $error = "Invalid email or password! $remaining_attempts attempts left.";
+            }
+            }
             $captcha_question = CaptchaHelper::generateMathCaptcha();
         }
     }
