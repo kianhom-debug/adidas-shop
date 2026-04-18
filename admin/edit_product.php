@@ -14,9 +14,14 @@ try {
     $stmt->execute([$id]);
     $product = $stmt->fetch();
 
-    if (!$product) {
+if (!$product) {
         die("Product not found!");
     }
+    
+    $stmt_photos = $pdo->prepare("SELECT * FROM product_photo WHERE product_id = ?");
+    $stmt_photos->execute([$id]);
+    $extra_photos = $stmt_photos->fetchAll();
+    
 } catch (PDOException $e) {
     die("Database Error: " . $e->getMessage());
 }
@@ -45,10 +50,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = "Invalid image file.";
     }
 }
-    try {
+try {
         $sql = "UPDATE product SET category_id = ?, name = ?, price = ?, stock = ?, type = ?, photo = ? WHERE id = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$category_id, $name, $price, $stock, $type, $photo, $id]);
+
+        if (!empty($_FILES['extra_photos']['name'][0])) {
+            foreach ($_FILES['extra_photos']['tmp_name'] as $key => $tmp_name) {
+                if ($_FILES['extra_photos']['error'][$key] == 0) {
+                    $ext = strtolower(pathinfo($_FILES['extra_photos']['name'][$key], PATHINFO_EXTENSION));
+                    $new_filename = uniqid("img_") . "." . $ext; 
+                    $target_path = "../uploads/products/" . $new_filename;
+                    
+                    if (move_uploaded_file($tmp_name, $target_path)) {
+                        resize_image($target_path, $target_path);
+                        $sql_photo = "INSERT INTO product_photo (product_id, filename) VALUES (?, ?)";
+                        $pdo->prepare($sql_photo)->execute([$id, $new_filename]);
+                    }
+                }
+            }
+        }
         
         echo "<script>alert('Product updated successfully!'); window.location='manage_product.php';</script>";
         exit();
@@ -112,6 +133,24 @@ $categories = $pdo->query("SELECT * FROM category")->fetchAll();
                             <div style="margin-top: 15px; border: 1px solid #eee; padding: 10px; display: inline-block; background: #fafafa;">
                                 <p style="font-size: 12px; color: #888; margin-bottom: 5px;">Current Preview:</p>
                                 <img src="../uploads/products/<?= $product['photo'] ?>" style="max-width: 150px; border: 1px solid #ddd; display: block;">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label>Add More Extra Photos (Leave blank if no new photos)</label>
+                            <input type="file" name="extra_photos[]" class="form-control" accept="image/*" multiple>
+                            
+                            <div style="margin-top: 15px; border: 1px solid #eee; padding: 10px; background: #fafafa;">
+                                <p style="font-size: 12px; color: #888; margin-bottom: 10px;">Current Extra Photos:</p>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    <?php if (count($extra_photos) > 0): ?>
+                                        <?php foreach ($extra_photos as $ep): ?>
+                                            <img src="../uploads/products/<?= htmlspecialchars($ep['filename']) ?>" style="width: 80px; height: 80px; object-fit: cover; border: 1px solid #ddd;">
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <p style="font-size: 12px; color: #999;">No extra photos uploaded yet.</p>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
 
