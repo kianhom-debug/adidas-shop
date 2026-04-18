@@ -107,7 +107,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <input type="password" name="confirm_password" required>
                     </div>
                     <button type="submit" class="btn-primary">Update Password</button>
-                    <a href="profile.php" class="btn-secondary">Cancel</a>
                 </form>
             </div>
         </div>

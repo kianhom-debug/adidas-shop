@@ -2,77 +2,54 @@
 session_start();
 require_once '../config.php';
 
-if (!isset($_SESSION['reset_email'])) {
-    header('Location: forgot_password.php');
-    exit;
+$token = $_GET['token'] ?? '';
+$tokenRow = null;
+
+// Delete expired tokens
+$pdo->prepare("DELETE FROM token WHERE expire < NOW()")->execute();
+
+if ($token) {
+    $stmt = $pdo->prepare("SELECT * FROM token WHERE id = ?");
+    $stmt->execute([$token]);
+    $tokenRow = $stmt->fetch();
 }
 
-$email = $_SESSION['reset_email'];
-$error = '';
-$success = '';
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Process password update if token is valid
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $tokenRow) {
     $password = $_POST['password'];
-    $confirm_password = $_POST['confirm_password'];
-    
-    if (empty($password)) {
-        $error = "Please enter a password";
-    } elseif (strlen($password) < 6) {
-        $error = "Password must be at least 6 characters";
-    } elseif ($password !== $confirm_password) {
-        $error = "Passwords do not match";
-    } else {
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE email = ?");
-        $stmt->execute([$hashed_password, $email]);
-        
-        unset($_SESSION['reset_email']);
-        $success = "Password reset successfully! <a href='login.php'>Login here</a>";
+    $confirm = $_POST['confirm_password'];
+
+    if (strlen($password) >= 6 && $password === $confirm) {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $pdo->prepare("UPDATE users SET password = ? WHERE id = ?")->execute([$hash, $tokenRow['user_id']]);
+        $pdo->prepare("DELETE FROM token WHERE id = ?")->execute([$token]);
+        // Optionally redirect to login after success (no message)
+        // header('Location: login.php');
+        // exit;
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password - Adidas Shop</title>
+    <title>Reset Password</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-box">
-            <div class="logo">
-                <h1>ADIDAS</h1>
-                <p>Create new password</p>
-            </div>
-            
-            <?php if ($error): ?>
-                <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
-            <?php endif; ?>
-            
-            <?php if ($success): ?>
-                <div class="alert alert-success"><?= $success ?></div>
-            <?php else: ?>
-                <form method="POST">
-                    <div class="form-group">
-                        <label for="password">New Password</label>
-                        <input type="password" name="password" id="password" required>
-                        <small style="color:#666;">Minimum 6 characters</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="confirm_password">Confirm New Password</label>
-                        <input type="password" name="confirm_password" id="confirm_password" required>
-                    </div>
-                    <button type="submit" class="btn-primary">Reset Password</button>
-                </form>
-            <?php endif; ?>
-            
-            <div class="auth-link">
-                <a href="login.php">← Back to Login</a>
-            </div>
-        </div>
+<div class="auth-container">
+    <div class="auth-box">
+        <div class="logo"><h1>ADIDAS</h1><p>Create new password</p></div>
+
+        <!-- Always show the form, no messages -->
+        <form method="POST">
+            <div class="form-group"><label>New Password</label><input type="password" name="password" minlength="6" required></div>
+            <div class="form-group"><label>Confirm Password</label><input type="password" name="confirm_password" required></div>
+            <button type="submit" class="btn-primary">Reset Password</button>
+        </form>
+
+        <div class="auth-link"><a href="login.php">← Back to Login</a></div>
     </div>
+</div>
 </body>
 </html>

@@ -17,17 +17,19 @@ $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
+    // Email is taken from session/database, not from POST
+    $email = $user['email']; // Keep original email
     
-    if (empty($name)) $errors['name'] = 'Name is required';
-    if (empty($email)) $errors['email'] = 'Email is required';
-    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors['email'] = 'Invalid email';
+    if (empty($name)) {
+        $errors['name'] = 'Name is required';
+    }
     
     if (empty($errors)) {
-        $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
-        if ($stmt->execute([$name, $email, $userId])) {
+        $stmt = $pdo->prepare("UPDATE users SET name = ? WHERE id = ?");
+        if ($stmt->execute([$name, $userId])) {
             $_SESSION['user_name'] = $name;
             $success = 'Profile updated successfully!';
+            // Refresh user data
             $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
             $stmt->execute([$userId]);
             $user = $stmt->fetch();
@@ -91,10 +93,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="form-group">
                         <label>Email Address</label>
-                        <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required>
+                        <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" readonly disabled style="background:#f5f5f5; cursor:not-allowed;">
+                        <small style="color:#666;">Email cannot be changed</small>
                     </div>
                     <button type="submit" class="btn-primary">Save Changes</button>
-                    <a href="profile.php" class="btn-secondary">Cancel</a>
                 </form>
             </div>
         </div>
