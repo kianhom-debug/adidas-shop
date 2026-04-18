@@ -34,11 +34,11 @@ if (!$order) {
     exit;
 }
 $stmt = $pdo->prepare("
-    SELECT i.*, p.name 
-    FROM item AS i 
-    JOIN product AS p ON i.product_id = p.id 
-    WHERE i.order_id = ?
-");
+        SELECT i.*, p.name 
+        FROM item AS i 
+        LEFT JOIN product AS p ON i.product_id = p.id 
+        WHERE i.order_id = ?
+    ");
 $stmt->execute([$orderId]);
 $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -83,6 +83,10 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php foreach ($items as $i): ?>
             <tr style="border-bottom: 1px solid #eee;">
                 <td style="padding:10px;"><?= htmlspecialchars($i['name']) ?></td>
+                <td style="padding:10px;">
+                    <?= htmlspecialchars($i['name'] ?? '[Deleted Product]') ?>
+                    <?php if(empty($i['name'])) echo "<br><small style='color:#999;'>ID: " . $i['product_id'] . "</small>"; ?>
+                </td>
                 <td style="text-align:right; padding:10px;"><?= number_format($i['price'], 2) ?></td>
                 <td style="text-align:center; padding:10px;"><?= $i['unit'] ?></td>
                 <td style="text-align:right; padding:10px;"><?= number_format($i['subtotal'], 2) ?></td>
