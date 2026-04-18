@@ -41,6 +41,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <li><a href="add_product.php" class="<?php echo $current_page == 'add_product.php' ? 'active' : ''; ?>">➕ Add New Product</a></li>
                     <li><a href="category_maintenance.php" class="<?php echo $current_page == 'category_maintenance.php' ? 'active' : ''; ?>">📂 Category Maintenance</a></li>
                     <li><a href="manage_orders.php" class="<?php echo $current_page == 'manage_orders.php' ? 'active' : ''; ?>">🛒 Manage Orders</a></li>
+                    <li><a href="manage_member.php" class="<?php echo $current_page == 'manage_member.php' ? 'active' : ''; ?>">👤 Manage Members</a></li>
                 </ul>
             </aside>
             <main class="admin-main">

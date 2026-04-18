@@ -42,6 +42,7 @@ try {
                     <li><a href="add_product.php">➕ Add New Product</a></li>
                     <li><a href="category_maintenance.php">📂 Category Maintenance</a></li>
                     <li><a href="manage_orders.php">🛒 Manage Orders</a></li>
+                    <li><a href="manage_member.php">👤 Manage Members</a></li>
                 </ul>
             </aside>
 

@@ -9,6 +9,9 @@ if (empty($productId)) {
     header('Location: ../index.php');
     exit;
 }
+$stmt_photos = $pdo->prepare("SELECT * FROM product_photo WHERE product_id = ?");
+$stmt_photos->execute([$productId]);
+$extra_photos = $stmt_photos->fetchAll(PDO::FETCH_ASSOC);
 
 $stmt = $pdo->prepare("SELECT * FROM product WHERE id = ?");
 $stmt->execute([$productId]);
@@ -77,8 +80,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
         <?php endif; ?>
 
         <div style="display: flex; gap: 50px;">
-            <div class="product-visual" style="flex: 1; background: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 10px; min-height: 400px; overflow: hidden;">
-                <img src="../uploads/products/<?= htmlspecialchars($product['photo']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" style="max-width: 100%; max-height: 400px; object-fit: contain;">
+            <div class="product-visual" style="flex: 1;">
+                <div style="background: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 10px; height: 400px; overflow: hidden; margin-bottom: 15px;">
+                    <img id="mainImage" src="../uploads/products/<?= htmlspecialchars($product['photo']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" style="max-width: 100%; max-height: 400px; object-fit: contain;">
+                </div>
+                
+                <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;">
+                    <img class="photo-thumb" src="../uploads/products/<?= htmlspecialchars($product['photo']) ?>" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #000; cursor: pointer; border-radius: 5px;" onclick="changeImage(this)">
+                    
+                    <?php foreach($extra_photos as $photo): ?>
+                        <img class="photo-thumb" src="../uploads/products/<?= htmlspecialchars($photo['filename']) ?>" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid transparent; cursor: pointer; border-radius: 5px;" onclick="changeImage(this)">
+                    <?php endforeach; ?>
+                </div>
             </div>
             
             <div class="product-details" style="flex: 1;">
@@ -116,5 +129,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
             </div>
         </div>
     </div>
+</body>
+<script>
+        function changeImage(element) {
+            document.getElementById('mainImage').src = element.src;
+
+            let thumbs = document.querySelectorAll('.photo-thumb');
+            thumbs.forEach(thumb => {
+                thumb.style.borderColor = 'transparent';
+            });
+
+            element.style.borderColor = '#000';
+        }
+    </script>
 </body>
 </html>
